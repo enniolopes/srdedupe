@@ -1,0 +1,37 @@
+{
+  "title": "srdedupe: Risk-controlled, reproducible deduplication of bibliographic records for evidence syntheses",
+  "description": "A Python package for scalable deduplication of bibliographic records (e.g., RIS exports and PubMed NBIB/MEDLINE-tagged records). The software implements a conservative, audit-friendly pipeline that separates candidate generation (high recall) from duplicate decisions (false-positive control), and produces machine-readable artifacts for traceability (run manifests, decision rationales, and review queues).",
+  "license": "MIT",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Lopes, Ennio Politi",
+      "affiliation": "Universidade de Sao Paulo",
+      "orcid": "0000-0003-2059-8313"
+    }
+  ],
+  "keywords": [
+    "deduplication",
+    "record linkage",
+    "entity resolution",
+    "systematic reviews",
+    "bibliographic data",
+    "Python",
+    "evidence synthesis",
+    "reproducible research"
+  ],
+  "language": "en",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/enniolopes/srdedupe",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ],
+  "communities": [
+    {
+      "identifier": "zenodo"
+    }
+  ],
+  "notes": "For citation information, see CITATION.cff in the repository."
+}

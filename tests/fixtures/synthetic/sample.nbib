@@ -1,0 +1,80 @@
+PMID- 11416540
+OWN - NLM
+STAT- MEDLINE
+DCOM- 20010712
+IS  - 0027-8424 (Print)
+VI  - 98
+IP  - 14
+DP  - 2001 Jul 3
+TI  - Machine Learning Approaches for Systematic Review Automation: A
+      Comprehensive Study of Modern Techniques and Applications in
+      Bibliographic Research
+PG  - 7841-6
+AB  - This is an abstract that spans multiple lines with proper
+      indentation continuation. The abstract contains important information
+      about the research methodology and findings. Modern machine learning
+      techniques can significantly improve the efficiency of systematic
+      reviews.
+AU  - Smith JA
+AU  - Doe JB
+AU  - Lee SC
+FAU - Smith, John A.
+FAU - Doe, Jane B.
+FAU - Lee, Sarah C.
+AD  - Department of Computer Science, University of Example, City, State 12345,
+      USA. john.smith@example.edu
+LA  - eng
+PT  - Journal Article
+PT  - Research Support, U.S. Gov't, P.H.S.
+PL  - United States
+TA  - Proc Natl Acad Sci U S A
+JT  - Proceedings of the National Academy of Sciences of the United States of
+      America
+JID - 7505876
+SB  - IM
+MH  - *Machine Learning
+MH  - Systematic Review/methods
+MH  - Automation
+MH  - Bibliographic Research
+EDAT- 2001/06/22 10:00
+MHDA- 2001/07/13 10:01
+CRDT- 2001/06/22 10:00
+PHST- 2001/04/25 00:00 [received]
+PHST- 2001/05/15 00:00 [accepted]
+AID - 10.1073/pnas.141136298 [doi]
+PST - ppublish
+SO  - Proc Natl Acad Sci U S A. 2001 Jul 3;98(14):7841-6. doi:
+      10.1073/pnas.141136298.
+
+PMID- 22567890
+OWN - NLM
+STAT- MEDLINE
+DCOM- 20231215
+IS  - 1234-5678 (Electronic)
+VI  - 42
+IP  - 3
+DP  - 2023 Sep
+TI  - Étude sur la déduplication bibliographique: méthodes avancées et
+      applications pratiques
+PG  - 123-145
+AB  - Cette étude présente des méthodes avancées pour la déduplication des
+      références bibliographiques. Les techniques modernes permettent
+      d'améliorer la précision et l'efficacité du processus.
+AU  - Müller F
+FAU - Müller, François
+AD  - Institut für Informationswissenschaft, Université de Genève, Schweiz.
+      francois.mueller@unige.ch
+LA  - fre
+PT  - Journal Article
+PL  - France
+TA  - Rev Fr Rech
+JT  - Revue Française de Recherche
+JID - 9876543
+MH  - *Bibliographic Deduplication
+MH  - Information Science/methods
+EDAT- 2023/08/15 10:00
+MHDA- 2023/12/16 09:00
+CRDT- 2023/08/15 10:00
+AID - 10.5678/rfr.2023.042 [doi]
+PST - ppublish
+SO  - Rev Fr Rech. 2023 Sep;42(3):123-145. doi: 10.5678/rfr.2023.042.

@@ -1,0 +1,104 @@
+{
+  "manifest_version": "1.0.0",
+  "run_id": "2026-02-03T12:34:56.123456Z__abcd1234",
+  "created_at": "2026-02-03T12:34:56.123456Z",
+  "finished_at": "2026-02-03T12:45:01.987654Z",
+  "duration_seconds": 605.864198,
+  "status": "success",
+  "transform_version": "git:f1ab974",
+  "command": {
+    "argv": ["srdedupe", "run", "--input", "data/", "--output", "out/"],
+    "cwd": "project"
+  },
+  "environment": {
+    "python_version": "3.12.3",
+    "platform": "Linux-6.8.0-x86_64",
+    "package_version": "0.6.0",
+    "dependencies": {
+      "jsonschema": "4.26.0",
+      "click": "8.1.0"
+    }
+  },
+  "inputs": {
+    "root": "data",
+    "files": [
+      {
+        "name": "export1.ris",
+        "format": "ris",
+        "bytes": 123456,
+        "mtime": "2026-02-01T10:00:00Z",
+        "sha256": "sha256:a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2",
+        "records_extracted": 2500
+      },
+      {
+        "name": "export2.nbib",
+        "format": "nbib",
+        "bytes": 234567,
+        "mtime": "2026-02-01T11:00:00Z",
+        "sha256": "sha256:b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3",
+        "records_extracted": 3500
+      },
+      {
+        "name": "export3.ris",
+        "format": "ris",
+        "bytes": 345678,
+        "mtime": "2026-02-01T12:00:00Z",
+        "sha256": "sha256:c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4",
+        "records_extracted": 2000
+      }
+    ],
+    "total_records_extracted": 8000
+  },
+  "parameters": {
+    "stage1": {
+      "unicode_normalization": "NFKC",
+      "doi_normalization": "v1",
+      "title_normalization": "v1"
+    },
+    "logging": {
+      "level": "INFO",
+      "redact_text_fields": true
+    }
+  },
+  "stages": [
+    {
+      "name": "stage1_normalize",
+      "started_at": "2026-02-03T12:35:00.123456Z",
+      "finished_at": "2026-02-03T12:40:00.987654Z",
+      "duration_seconds": 300.864198,
+      "counters": {
+        "records_in": 8000,
+        "records_out": 8000,
+        "doi_present": 5600,
+        "pmid_present": 1200,
+        "title_missing": 3,
+        "title_truncated": 15,
+        "authors_missing": 8,
+        "year_missing": 12
+      },
+      "artifacts": [
+        {
+          "path": "artifacts/stage1_records.jsonl",
+          "sha256": "sha256:d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5",
+          "bytes": 10485760,
+          "record_count": 8000
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "artifacts": [
+      {
+        "path": "events.jsonl",
+        "sha256": "sha256:e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
+        "bytes": 204800
+      },
+      {
+        "path": "run.json",
+        "sha256": "sha256:f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1",
+        "bytes": 4096
+      }
+    ]
+  },
+  "errors": []
+}
