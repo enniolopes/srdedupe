@@ -1,0 +1,198 @@
+# ========== PEP 621 PROJECT METADATA ==========
+
+[project]
+name = "srdedupe"
+version = "0.1.0"
+description = "Safe, FPR-controlled, reproducible deduplication pipeline for bibliographic reference files, designed for systematic review workflows."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Ennio Politi Lopes", email = "enniolopes@gmail.com"}
+]
+maintainers = [
+    {name = "Ennio Politi Lopes", email = "enniolopes@gmail.com"}
+]
+keywords = [
+    "deduplication",
+    "systematic-review",
+    "bibliographic-references",
+    "research",
+    "scientific",
+    "reproducible-research"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
+dependencies = [
+    "click>=8.1",
+    "datasketch>=1.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "mypy>=1.8",
+    "ruff>=0.2",
+    "pre-commit>=3.0",
+    "build>=1.0",
+    "twine>=4.0",
+    "jsonschema>=4.26",
+]
+type-check = [
+    "pyright>=1.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/enniolopes/srdedupe"
+Repository = "https://github.com/enniolopes/srdedupe"
+Issues = "https://github.com/enniolopes/srdedupe/issues"
+Changelog = "https://github.com/enniolopes/srdedupe/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/enniolopes/srdedupe#readme"
+
+[project.scripts]
+srdedupe = "srdedupe.cli.main:cli"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+# ========== POETRY-SPECIFIC CONFIGURATION ==========
+
+[tool.poetry]
+# Package discovery for Poetry backend
+packages = [
+    { include = "srdedupe", from = "src" },
+]
+# Additional files to include in package
+include = [
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "schemas/**/*.json",
+]
+# Files to exclude from built package
+exclude = [
+    "tests",
+    "scripts",
+    ".github",
+    ".vscode",
+    ".devcontainer",
+    "paper.md",
+    "paper.bib",
+    "*.yml",
+    "*.yaml",
+    ".editorconfig",
+    ".gitignore",
+    ".pre-commit-config.yaml",
+    "Makefile",
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+pytest-cov = "^4.0"
+mypy = "^1.8"
+ruff = "^0.2"
+pre-commit = "^3.0"
+build = "^1.0"
+twine = "^6.2.0"
+jsonschema = "^4.26.0"
+
+[tool.poetry.group.type-check]
+optional = true
+
+[tool.poetry.group.type-check.dependencies]
+pyright = "^1.1"
+
+# ========== TYPE CHECKING (STRICT MODE) ==========
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+exclude = ["venv", "build", "dist", "examples"]
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "pytest"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "click.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "datasketch.*"
+ignore_missing_imports = true
+
+[tool.pyright]
+include = ["src"]
+exclude = ["venv", "build", "dist"]
+typeCheckingMode = "strict"
+
+# ========== LINTING & FORMATTING ==========
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["srdedupe"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+# ========== TESTING ==========
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src"]
+python_files = "test_*.py"
+addopts = "--cov=src/srdedupe --cov-report=html --cov-report=term-missing --cov-fail-under=80 --strict-markers"
+markers = [
+    "unit: unit tests",
+    "integration: integration tests",
+    "slow: slow tests",
+]
+
+[tool.coverage.run]
+source = ["src/srdedupe"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]

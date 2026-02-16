@@ -1,0 +1,6 @@
+{"pair_id":"rid_1|rid_2","rid_a":"rid_1","rid_b":"rid_2","p_match":0.999,"decision":"AUTO_DUP","reasons":[{"code":"doi_exact"}]}
+{"pair_id":"rid_2|rid_3","rid_a":"rid_2","rid_b":"rid_3","p_match":0.999,"decision":"AUTO_DUP","reasons":[{"code":"doi_exact"}]}
+{"pair_id":"rid_4|rid_5","rid_a":"rid_4","rid_b":"rid_5","p_match":0.70,"decision":"AUTO_DUP","reasons":[{"code":"title_similar"}]}
+{"pair_id":"rid_5|rid_6","rid_a":"rid_5","rid_b":"rid_6","p_match":0.70,"decision":"AUTO_DUP","reasons":[{"code":"title_similar"}]}
+{"pair_id":"rid_7|rid_8","rid_a":"rid_7","rid_b":"rid_8","p_match":0.999,"decision":"AUTO_DUP","reasons":[{"code":"title_exact"}]}
+{"pair_id":"rid_9|rid_10","rid_a":"rid_9","rid_b":"rid_10","p_match":0.15,"decision":"AUTO_KEEP","reasons":[{"code":"p_below_t_low"}]}

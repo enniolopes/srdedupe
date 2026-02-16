@@ -1,0 +1,265 @@
+{
+  "schema_version": "1.0.0",
+  "rid": "8c5e6c14-8a9e-5c4b-b8e5-7e8f4d2a3b1c",
+  "record_digest": "sha256:abc123def456789abc123def456789abc123def456789abc123def456789abcd",
+  "source_digest": "sha256:fed987cba654321fed987cba654321fed987cba654321fed987cba654321dcba",
+  "meta": {
+    "source_file": "pubmed_export_2024.ris",
+    "source_format": "ris",
+    "source_db": "pubmed",
+    "source_record_index": 0,
+    "ingested_at": "2024-01-30T12:00:00Z",
+    "source_file_mtime": "2024-01-29T10:30:00Z",
+    "source_file_size_bytes": 524288,
+    "parser_version": "0.1.0"
+  },
+  "raw": {
+    "record_lines": [
+      "TY  - JOUR",
+      "TI  - Machine Learning Approaches for Systematic Review Automation",
+      "AU  - Smith, John A.",
+      "AU  - Doe, Jane B.",
+      "AU  - Lee, Sarah C.",
+      "PY  - 2024",
+      "DO  - 10.1234/example.2024.001",
+      "JF  - Journal of Research Methods",
+      "VL  - 42",
+      "IS  - 3",
+      "SP  - 123",
+      "EP  - 145",
+      "ER  - "
+    ],
+    "tags": [
+      {
+        "tag": "TY",
+        "value_lines": ["JOUR"],
+        "value_raw_joined": "JOUR",
+        "occurrence": 0,
+        "line_start": 0,
+        "line_end": 0
+      },
+      {
+        "tag": "TI",
+        "value_lines": ["Machine Learning Approaches for Systematic Review Automation"],
+        "value_raw_joined": "Machine Learning Approaches for Systematic Review Automation",
+        "occurrence": 0,
+        "line_start": 1,
+        "line_end": 1
+      },
+      {
+        "tag": "AU",
+        "value_lines": ["Smith, John A."],
+        "value_raw_joined": "Smith, John A.",
+        "occurrence": 0,
+        "line_start": 2,
+        "line_end": 2
+      },
+      {
+        "tag": "AU",
+        "value_lines": ["Doe, Jane B."],
+        "value_raw_joined": "Doe, Jane B.",
+        "occurrence": 1,
+        "line_start": 3,
+        "line_end": 3
+      },
+      {
+        "tag": "AU",
+        "value_lines": ["Lee, Sarah C."],
+        "value_raw_joined": "Lee, Sarah C.",
+        "occurrence": 2,
+        "line_start": 4,
+        "line_end": 4
+      },
+      {
+        "tag": "PY",
+        "value_lines": ["2024"],
+        "value_raw_joined": "2024",
+        "occurrence": 0,
+        "line_start": 5,
+        "line_end": 5
+      },
+      {
+        "tag": "DO",
+        "value_lines": ["10.1234/example.2024.001"],
+        "value_raw_joined": "10.1234/example.2024.001",
+        "occurrence": 0,
+        "line_start": 6,
+        "line_end": 6
+      },
+      {
+        "tag": "JF",
+        "value_lines": ["Journal of Research Methods"],
+        "value_raw_joined": "Journal of Research Methods",
+        "occurrence": 0,
+        "line_start": 7,
+        "line_end": 7
+      },
+      {
+        "tag": "VL",
+        "value_lines": ["42"],
+        "value_raw_joined": "42",
+        "occurrence": 0,
+        "line_start": 8,
+        "line_end": 8
+      },
+      {
+        "tag": "IS",
+        "value_lines": ["3"],
+        "value_raw_joined": "3",
+        "occurrence": 0,
+        "line_start": 9,
+        "line_end": 9
+      },
+      {
+        "tag": "SP",
+        "value_lines": ["123"],
+        "value_raw_joined": "123",
+        "occurrence": 0,
+        "line_start": 10,
+        "line_end": 10
+      },
+      {
+        "tag": "EP",
+        "value_lines": ["145"],
+        "value_raw_joined": "145",
+        "occurrence": 0,
+        "line_start": 11,
+        "line_end": 11
+      }
+    ],
+    "unknown_lines": []
+  },
+  "canon": {
+    "doi": "10.1234/example.2024.001",
+    "doi_norm": "10.1234/example.2024.001",
+    "doi_url": "https://doi.org/10.1234/example.2024.001",
+    "pmid": null,
+    "pmid_norm": null,
+    "pmcid": null,
+    "title_raw": "Machine Learning Approaches for Systematic Review Automation",
+    "title_norm_basic": "machine learning approaches for systematic review automation",
+    "abstract_raw": null,
+    "abstract_norm_basic": null,
+    "authors_raw": ["Smith, John A.", "Doe, Jane B.", "Lee, Sarah C."],
+    "authors_parsed": [
+      {
+        "family": "Smith",
+        "given": "John A.",
+        "initials": "J.A.",
+        "suffix": null,
+        "raw": "Smith, John A."
+      },
+      {
+        "family": "Doe",
+        "given": "Jane B.",
+        "initials": "J.B.",
+        "suffix": null,
+        "raw": "Doe, Jane B."
+      },
+      {
+        "family": "Lee",
+        "given": "Sarah C.",
+        "initials": "S.C.",
+        "suffix": null,
+        "raw": "Lee, Sarah C."
+      }
+    ],
+    "first_author_sig": "Smith|J.A.",
+    "author_sig_strict": ["Smith|J.A.", "Doe|J.B.", "Lee|S.C."],
+    "author_sig_loose": ["Smith|J", "Doe|J", "Lee|S"],
+    "year_raw": "2024",
+    "year_norm": 2024,
+    "year_source": "RIS.PY",
+    "journal_full": "Journal of Research Methods",
+    "journal_abbrev": null,
+    "journal_norm": "journal of research methods",
+    "volume": "42",
+    "issue": "3",
+    "pages_raw": "123-145",
+    "pages_norm_long": "123-145",
+    "page_first": "123",
+    "page_last": "145",
+    "article_number": null,
+    "language": null,
+    "publication_type": ["Journal Article"]
+  },
+  "keys": {
+    "title_key_strict": "machine_learning_approaches_systematic_review_automation",
+    "title_year_key": "machine_learning_approaches_systematic_review_automation_2024",
+    "title_first_author_key": "machine_learning_approaches_systematic_review_automation_smith",
+    "title_journal_key": "machine_learning_approaches_systematic_review_automation_journal_research_methods",
+    "title_key_fuzzy": "machinelearningapproachessystematicreviewautomation",
+    "title_shingles": ["machine learning", "learning approaches", "approaches for", "for systematic", "systematic review", "review automation"],
+    "title_minhash": null,
+    "title_simhash": null
+  },
+  "flags": {
+    "doi_present": true,
+    "pmid_present": false,
+    "title_missing": false,
+    "title_truncated": false,
+    "authors_missing": false,
+    "authors_incomplete": false,
+    "year_missing": false,
+    "pages_unreliable": false,
+    "is_erratum_notice": false,
+    "is_retraction_notice": false,
+    "is_corrected_republished": false,
+    "has_linked_citation": false
+  },
+  "provenance": {
+    "canon.doi_norm": {
+      "sources": [
+        {
+          "path": "raw.tags[6]",
+          "tag": "DO",
+          "value_snippet": "10.1234/example.2024.001",
+          "source_format": "ris"
+        }
+      ],
+      "transforms": [],
+      "confidence": "high"
+    },
+    "canon.title_norm_basic": {
+      "sources": [
+        {
+          "path": "raw.tags[1]",
+          "tag": "TI",
+          "value_snippet": "Machine Learning Approaches for Systematic Review Automation",
+          "source_format": "ris"
+        }
+      ],
+      "transforms": [
+        {
+          "name": "lowercase",
+          "version": "1",
+          "notes": "converted to lowercase"
+        },
+        {
+          "name": "collapse_whitespace",
+          "version": "1",
+          "notes": "collapsed multiple spaces to single space"
+        }
+      ],
+      "confidence": "high"
+    },
+    "canon.year_norm": {
+      "sources": [
+        {
+          "path": "raw.tags[5]",
+          "tag": "PY",
+          "value_snippet": "2024",
+          "source_format": "ris"
+        }
+      ],
+      "transforms": [
+        {
+          "name": "parse_year",
+          "version": "1",
+          "notes": "extracted 4-digit year"
+        }
+      ],
+      "confidence": "high"
+    }
+  }
+}

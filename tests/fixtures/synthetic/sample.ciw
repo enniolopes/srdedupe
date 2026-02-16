@@ -1,0 +1,30 @@
+FN Thomson Reuters Web of Science™
+VR 1.0
+PT J
+AU Smith, JA
+AU Doe, JB
+TI Machine Learning Approaches
+   for Systematic Reviews
+SO Journal of Research Methods
+PY 2024
+VL 42
+BP 123
+EP 145
+DI 10.1234/example.2024.001
+AB This is an abstract that spans multiple lines with proper
+   indentation continuation. It contains detailed information
+   about the research methodology.
+ER
+
+PT J
+AU Müller, François
+TI Étude sur la déduplication bibliographique
+SO Revue Française de Recherche
+PY 2023
+VL 15
+BP 45
+EP 67
+DI 10.5678/test.2023.002
+ER
+
+EF

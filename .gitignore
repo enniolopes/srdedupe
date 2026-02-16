@@ -1,0 +1,61 @@
+# Project-specific
+input/
+out/
+copilot-instructions.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.Python
+
+# Testing & Coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+nosetests.xml
+coverage.xml
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Package managers
+.venv/
+venv/
+env/
+ENV/
+.pixi/
+.pdm-python/
+
+# Packaging QA test artifacts
+.venv_pkg_wheel_*/
+.venv_pkg_sdist_*/
+.venv_cli_test_*/
+
+# Ruff & linting
+.ruff_cache/
+
+# Poetry (include poetry.lock in version control)
+# poetry.lock should NOT be ignored
+
+# Environment variables
+.env
+.envrc

@@ -1,0 +1,31 @@
+TY  - JOUR
+TI  - Machine Learning Approaches for Systematic Review Automation
+AU  - Smith, John A.
+AU  - Doe, Jane B.
+AU  - Lee, Sarah C.
+PY  - 2024
+DO  - 10.1234/example.2024.001
+JF  - Journal of Research Methods
+VL  - 42
+IS  - 3
+SP  - 123
+EP  - 145
+AB  - This is an abstract that spans
+      multiple lines with proper
+      indentation continuation.
+KW  - machine learning
+KW  - systematic review
+KW  - automation
+ER  -
+
+TY  - JOUR
+TI  - Étude sur la déduplication bibliographique
+AU  - Müller, François
+PY  - 2023
+DO  - 10.5678/test.2023.002
+JF  - Revue Française de Recherche
+VL  - 15
+IS  - 2
+SP  - 45
+EP  - 67
+ER  -

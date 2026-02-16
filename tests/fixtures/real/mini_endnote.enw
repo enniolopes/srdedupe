@@ -1,0 +1,24 @@
+%0 Journal Article
+%A Sheng-Hsin Su
+%T WoodProperty.tw: a wood property database for tree and bamboo species in Taiwan
+%D 2025
+%J Taiwania
+%V 70
+%N 1
+%P 58-64
+%U https://taiwania.ntu.edu.tw/abstract/2047
+%X Wood and bamboo represent the biomass accumulated over the life history of trees and bamboos, playing critical roles in both biotic and abiotic processes within ecosystems. These materials also serve as vital renewable resources for humanity, contributing to the sustainable utilization of natural resources and underpinning the advancement of human civilization. A thorough understanding of the properties of wood and bamboo across different species is essential for the sustainable management of forest ecosystems and the efficient use of these resources. Previously, research outcome on wood and bamboo properties in Taiwan has been fragmented, with findings scattered across diverse printed literature, hindering access and utilization. This study presents a systematic review of scientific publications from Taiwan, extracting wood property data from various tree and bamboo species and integrating this information into a comprehensive, computerized database. The resulting database, “WoodProperty.tw”, compiles data extracted from 156 documents published between 1947 and 2018, encompassing 5,762 records and 236 data fields of wood property data for 607 species in Taiwan. WoodProperty.tw features standardized and clearly defined data fields, traceable source literature, and unified species taxonomic information. It is released under a Creative Commons Attribution 4.0 License (CC BY 4.0) and is publicly accessible for download, use, adaptation, and distribution.
+%M doi:10.6165/tai.2025.70.58
+%R 10.6165/tai.2025.70.58
+
+%0 Journal Article
+%T Shortcuts for faster image creation in PyMOL
+%A Mooers, Blaine HM
+%J Protein Science
+%V 29
+%N 1
+%P 268-276
+%@ 0961-8368
+%D 2020
+%I Wiley Online Library
+%R 10.1002/pro.12345

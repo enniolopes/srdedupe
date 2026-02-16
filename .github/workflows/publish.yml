@@ -1,0 +1,156 @@
+# Publish workflow using Trusted Publishing (OIDC) for PyPI and TestPyPI
+#
+# This workflow implements secure, token-less publishing following PyPA best practices:
+# - https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+# - https://docs.pypi.org/trusted-publishers/
+#
+# Architecture:
+# 1. build job: Creates wheel and sdist, uploads as artifact
+# 2. publish-to-testpypi: Downloads artifact, publishes to TestPyPI (with skip-existing)
+# 3. publish-to-pypi: Downloads artifact, publishes to PyPI (fail loudly on duplicates)
+#
+# Security features:
+# - Uses OIDC tokens (valid ~15 min) instead of long-lived tokens
+# - Minimal permissions (id-token: write only in publish jobs)
+# - GitHub environments for deployment protection
+# - Action pinning for supply chain security
+#
+# Setup requirements:
+# 1. Configure Trusted Publisher on PyPI:
+#    - Project: srdedupe
+#    - Owner/Repo: enniolopes/srdedupe
+#    - Workflow: .github/workflows/publish.yml
+#    - Environment: pypi
+#
+# 2. Configure Trusted Publisher on TestPyPI:
+#    - Project: srdedupe
+#    - Owner/Repo: enniolopes/srdedupe
+#    - Workflow: .github/workflows/publish.yml
+#    - Environment: testpypi
+#
+# 3. Create GitHub environments with protection:
+#    - testpypi: No protection (automatic)
+#    - pypi: Required reviewers + prevent self-review (manual approval)
+
+name: Publish
+
+on:
+  # Trigger on version tags (v1.0.0, v2.1.3, etc.)
+  push:
+    tags:
+      - "v*"
+
+  # Allow manual trigger for testing/replay
+  workflow_dispatch:
+
+# Restrict permissions by default (principle of least privilege)
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distribution packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: ~/.local/bin/poetry install --only main
+
+      - name: Build wheel and source distribution
+        run: ~/.local/bin/poetry build
+
+      - name: Verify build artifacts
+        run: |
+          ls -lh dist/
+          echo "Built packages:"
+          ls -1 dist/
+
+      - name: Upload distribution packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-to-testpypi:
+    name: Publish to TestPyPI
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Use dedicated environment for OIDC configuration
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/srdedupe
+
+    # Grant id-token permission for OIDC (only in this job)
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download distribution packages
+        uses: actions/download-artifact@v4.1.3
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Verify downloaded artifacts
+        run: |
+          ls -lh dist/
+          echo "Ready to publish:"
+          ls -1 dist/
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          # Allow re-runs without failure on duplicate uploads
+          # (TestPyPI is for testing; PyPI should fail loudly)
+          skip-existing: true
+          # Attestations enabled by default (PEP 740 supply chain security)
+          # Set attestations: false if needed to disable
+
+  publish-to-pypi:
+    name: Publish to PyPI
+    needs: publish-to-testpypi
+    runs-on: ubuntu-latest
+
+    # Use dedicated environment with manual approval protection
+    environment:
+      name: pypi
+      url: https://pypi.org/p/srdedupe
+
+    # Grant id-token permission for OIDC (only in this job)
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download distribution packages
+        uses: actions/download-artifact@v4.1.3
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Verify downloaded artifacts
+        run: |
+          ls -lh dist/
+          echo "Ready to publish:"
+          ls -1 dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No repository-url (defaults to PyPI)
+        # No skip-existing (fail loudly on duplicates for production)
+        # Attestations enabled by default (PEP 740 supply chain security)

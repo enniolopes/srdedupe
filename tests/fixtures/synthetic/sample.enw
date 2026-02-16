@@ -1,0 +1,32 @@
+%0 Journal Article
+%A Smith, John A.
+%A Doe, Jane B.
+%T Machine Learning Approaches
+   for Systematic Reviews
+%D 2024
+%B Journal of Research Methods
+%V 42
+%I Academic Press
+%P 123-145
+%X This is an abstract that demonstrates
+   the continuation line handling in EndNote
+   format. Each non-empty line without a percent
+   sign continues the previous field.
+%K machine learning
+%K systematic review
+%K deduplication
+
+%0 Conference Proceedings
+%A Müller, François
+%A García, María José
+%T Étude Comparative des Méthodes de Déduplication
+   Bibliographique: Une Approche Systématique
+%D 2023
+%B Actes de la Conférence Internationale
+%C Paris, France
+%P 45-67
+%X Les résultats montrent l'importance
+   de l'analyse multilingue. Non-ASCII characters
+   like é, ñ, ü should be preserved correctly.
+%K déduplication
+%K multilingual

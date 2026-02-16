@@ -1,0 +1,274 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/enniolopes/srdedupe/schemas/run_manifest.schema.json",
+  "title": "srdedupe Run Manifest",
+  "description": "Complete execution manifest for a deduplication pipeline run",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "run_id",
+    "created_at",
+    "status",
+    "transform_version",
+    "command",
+    "environment",
+    "inputs",
+    "parameters",
+    "stages",
+    "outputs"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version in semver format"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Unique run identifier (ISO8601 timestamp + random suffix)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 UTC timestamp when run started"
+    },
+    "finished_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO8601 UTC timestamp when run finished"
+    },
+    "duration_seconds": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Total execution time in seconds"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "failed", "partial"],
+      "description": "Run completion status"
+    },
+    "transform_version": {
+      "type": "string",
+      "description": "Git SHA or package version (e.g., git:abc123 or 0.6.0)"
+    },
+    "command": {
+      "type": "object",
+      "required": ["argv"],
+      "properties": {
+        "argv": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1,
+          "description": "Full command-line arguments"
+        },
+        "cwd": {
+          "type": ["string", "null"],
+          "description": "Working directory basename (for privacy)"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": ["python_version", "platform", "package_version"],
+      "properties": {
+        "python_version": {
+          "type": "string",
+          "description": "Python version (e.g., 3.12.3)"
+        },
+        "platform": {
+          "type": "string",
+          "description": "OS and architecture"
+        },
+        "package_version": {
+          "type": "string",
+          "description": "srdedupe package version"
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Key dependency versions"
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "required": ["root", "files", "total_records_extracted"],
+      "properties": {
+        "root": {
+          "type": "string",
+          "description": "Input directory basename"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "format", "bytes", "sha256", "records_extracted"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Filename"
+              },
+              "format": {
+                "type": "string",
+                "description": "Detected format (ris, nbib, bibtex, etc.)"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "File size in bytes"
+              },
+              "mtime": {
+                "type": ["string", "null"],
+                "format": "date-time",
+                "description": "ISO8601 modification time"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$",
+                "description": "SHA256 digest with sha256: prefix"
+              },
+              "records_extracted": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Number of records extracted from this file"
+              }
+            }
+          }
+        },
+        "total_records_extracted": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total records across all input files"
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Complete configuration snapshot for the run"
+    },
+    "stages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "started_at", "counters"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Stage identifier"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 start time"
+          },
+          "finished_at": {
+            "type": ["string", "null"],
+            "format": "date-time",
+            "description": "ISO8601 end time"
+          },
+          "duration_seconds": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "description": "Stage execution duration"
+          },
+          "counters": {
+            "type": "object",
+            "additionalProperties": {"type": "integer"},
+            "description": "Stage-specific metrics (all integers)"
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Relative path from output directory"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^sha256:[a-f0-9]{64}$",
+                  "description": "SHA256 digest with sha256: prefix"
+                },
+                "bytes": {
+                  "type": ["integer", "null"],
+                  "minimum": 0,
+                  "description": "File size in bytes"
+                },
+                "record_count": {
+                  "type": ["integer", "null"],
+                  "minimum": 0,
+                  "description": "Number of records in artifact"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "required": ["artifacts"],
+      "properties": {
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Relative path from output directory"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$",
+                "description": "SHA256 digest with sha256: prefix"
+              },
+              "bytes": {
+                "type": ["integer", "null"],
+                "minimum": 0,
+                "description": "File size in bytes"
+              }
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "exception_class", "message"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 when error occurred"
+          },
+          "stage": {
+            "type": ["string", "null"],
+            "description": "Stage where error occurred"
+          },
+          "exception_class": {
+            "type": "string",
+            "description": "Exception class name"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "traceback": {
+            "type": ["string", "null"],
+            "description": "Stack trace (if debug mode)"
+          },
+          "rid": {
+            "type": ["string", "null"],
+            "description": "Record identifier if error is record-specific"
+          }
+        }
+      }
+    }
+  }
+}

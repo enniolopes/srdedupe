@@ -1,0 +1,262 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/enniolopes/srdedupe/schemas/log_event.schema.json",
+  "title": "srdedupe Log Event",
+  "description": "Structured event for audit logging in JSONL format",
+  "type": "object",
+  "required": ["ts", "run_id", "level", "event", "data"],
+  "properties": {
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp with microseconds (UTC)",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d+Z$"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Unique run identifier linking to manifest"
+    },
+    "level": {
+      "type": "string",
+      "enum": ["DEBUG", "INFO", "WARN", "ERROR"],
+      "description": "Log level"
+    },
+    "event": {
+      "type": "string",
+      "enum": [
+        "run_started",
+        "run_finished",
+        "stage_started",
+        "stage_finished",
+        "record_stage1_completed",
+        "record_flagged",
+        "artifact_written",
+        "error"
+      ],
+      "description": "Event type identifier"
+    },
+    "stage": {
+      "type": ["string", "null"],
+      "description": "Current stage identifier"
+    },
+    "rid": {
+      "type": ["string", "null"],
+      "description": "Record identifier (UUIDv5) if event is record-specific"
+    },
+    "data": {
+      "type": "object",
+      "description": "Event-specific data payload"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"event": {"const": "run_started"}}
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["command"],
+            "properties": {
+              "command": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "parameters": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "run_finished"}}
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": ["status", "duration_seconds"],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["success", "failed", "partial"]
+              },
+              "duration_seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "records_processed": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "stage_started"}}
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "expected_records": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "required": ["stage"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "stage_finished"}}
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "required": ["duration_seconds"],
+            "properties": {
+              "duration_seconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "counters": {
+                "type": "object",
+                "additionalProperties": {"type": "integer"}
+              }
+            }
+          }
+        },
+        "required": ["stage"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "record_stage1_completed"}}
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "rid": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": ["stage", "rid"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "record_flagged"}}
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "rid": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "required": ["flag_name", "reason_code"],
+            "properties": {
+              "flag_name": {
+                "type": "string"
+              },
+              "reason_code": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["stage", "rid"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "artifact_written"}}
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "required": ["path", "sha256"],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "record_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "required": ["stage"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"event": {"const": "error"}}
+      },
+      "then": {
+        "properties": {
+          "level": {
+            "const": "ERROR"
+          },
+          "data": {
+            "type": "object",
+            "required": ["exception_class", "message"],
+            "properties": {
+              "exception_class": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "traceback": {
+                "type": ["string", "null"]
+              },
+              "rid": {
+                "type": ["string", "null"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
