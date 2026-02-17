@@ -78,13 +78,14 @@ packages = [
 include = [
     "LICENSE",
     "README.md",
-    "CHANGELOG.md",
     "schemas/**/*.json",
 ]
 # Files to exclude from built package
 exclude = [
     "tests",
     "scripts",
+    "models",
+    "examples",
     ".github",
     ".vscode",
     ".devcontainer",
@@ -95,6 +96,7 @@ exclude = [
     ".editorconfig",
     ".gitignore",
     ".pre-commit-config.yaml",
+    ".zenodo.json",
     "Makefile",
 ]
 
