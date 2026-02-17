@@ -10,27 +10,10 @@
 # 3. publish-to-pypi: Downloads artifact, publishes to PyPI (fail loudly on duplicates)
 #
 # Security features:
-# - Uses OIDC tokens (valid ~15 min) instead of long-lived tokens
+# - OIDC tokens (valid ~15 min) instead of long-lived tokens
 # - Minimal permissions (id-token: write only in publish jobs)
 # - GitHub environments for deployment protection
 # - Action pinning for supply chain security
-#
-# Setup requirements:
-# 1. Configure Trusted Publisher on PyPI:
-#    - Project: srdedupe
-#    - Owner/Repo: enniolopes/srdedupe
-#    - Workflow: .github/workflows/publish.yml
-#    - Environment: pypi
-#
-# 2. Configure Trusted Publisher on TestPyPI:
-#    - Project: srdedupe
-#    - Owner/Repo: enniolopes/srdedupe
-#    - Workflow: .github/workflows/publish.yml
-#    - Environment: testpypi
-#
-# 3. Create GitHub environments with protection:
-#    - testpypi: No protection (automatic)
-#    - pypi: Required reviewers + prevent self-review (manual approval)
 
 name: Publish
 
