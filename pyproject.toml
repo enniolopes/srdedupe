@@ -105,7 +105,7 @@ python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.0"
-pytest-cov = "^4.0"
+pytest-cov = "^7.0"
 mypy = "^1.8"
 ruff = "^0.15"
 pre-commit = "^3.0"
