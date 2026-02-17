@@ -115,7 +115,7 @@ jobs:
         with:
           files: ./coverage.xml
           fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
+          # token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload test results on failure
         if: failure()
