@@ -72,19 +72,19 @@ Pairs classified as REVIEW are preserved in output artifacts for manual inspecti
 
 ## API Reference
 
-### `parse_file(path, *, strict=True) -> list[CanonicalRecord]`
+`parse_file(path, *, strict=True) -> list[CanonicalRecord]`
 
-Parse a single bibliographic file. Format is auto-detected from file content.
+- Parse a single bibliographic file. Format is auto-detected from file content.
 
-### `parse_folder(path, *, pattern=None, recursive=False, strict=False) -> list[CanonicalRecord]`
+`parse_folder(path, *, pattern=None, recursive=False, strict=False) -> list[CanonicalRecord]`
 
-Parse all supported files in a folder. Optional glob `pattern` (e.g. `"*.ris"`).
+- Parse all supported files in a folder. Optional glob `pattern` (e.g. `"*.ris"`).
 
-### `write_jsonl(records, path, *, sort_keys=True) -> None`
+`write_jsonl(records, path, *, sort_keys=True) -> None`
 
-Write records to JSONL file with deterministic field ordering.
+- Write records to JSONL file with deterministic field ordering.
 
-### `dedupe(input_path, *, output_dir="out", fpr_alpha=0.01, t_low=0.3, t_high=None) -> PipelineResult`
+`dedupe(input_path, *, output_dir="out", fpr_alpha=0.01, t_low=0.3, t_high=None) -> PipelineResult`
 
 Run the full deduplication pipeline. Returns a `PipelineResult` with:
 - `success`, `total_records`, `total_candidates`, `total_duplicates_auto`, `total_review_pairs`
@@ -147,7 +147,6 @@ make test          # Full test suite (417 tests, ≥80% coverage)
 ## Documentation
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Code style, testing, contribution guidelines
-- [CHANGELOG.md](CHANGELOG.md) — Version history
 
 ## License
 
@@ -163,5 +162,3 @@ MIT — see [LICENSE](LICENSE).
   url = {https://github.com/enniolopes/srdedupe}
 }
 ```
-
-See [CITATION.cff](CITATION.cff) for detailed citation information.
