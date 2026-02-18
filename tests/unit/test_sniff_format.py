@@ -23,8 +23,16 @@ def test_sniff_format_wos() -> None:
 
 @pytest.mark.unit
 def test_sniff_format_ris() -> None:
-    """Test RIS format detection via TY + ER."""
+    """Test RIS format detection via TY tag."""
     lines = ["TY  - JOUR", "AU  - Smith, J", "TI  - Test", "ER  - "]
+    assert sniff_format(lines) == "ris"
+
+
+@pytest.mark.unit
+def test_sniff_format_ris_without_er_in_sample() -> None:
+    """Test RIS detection when first record is large and ER falls beyond sample."""
+    lines = ["TY  - JOUR", "AU  - Smith, J"]
+    lines.extend([f"AD  - Affiliation {i}" for i in range(120)])
     assert sniff_format(lines) == "ris"
 
 

@@ -262,7 +262,7 @@ def dedupe(
 
         >>> from srdedupe import dedupe
         >>> result = dedupe("references.ris")
-        >>> print(result.total_records, result.total_duplicates_auto)
+        >>> print(result.total_records, result.total_duplicates_auto, result.total_unique_records)
 
     Deduplicate a folder with stricter FPR:
 

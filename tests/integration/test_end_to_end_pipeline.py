@@ -42,7 +42,9 @@ def test_end_to_end_pipeline_with_no_duplicates() -> None:
         assert result.total_records == 2
         assert result.total_candidates >= 0  # May be 0 or more
         assert result.total_duplicates_auto == 0  # No duplicates expected
-        assert result.total_review_pairs >= 0
+        assert result.total_review_records >= 0
+        assert result.total_unique_records >= 0
+        assert 0.0 <= result.dedup_rate <= 1.0
 
         # Verify output files exist
         assert "canonical_records" in result.output_files
@@ -138,7 +140,9 @@ def test_end_to_end_pipeline_determinism() -> None:
         assert result_1.total_records == result_2.total_records
         assert result_1.total_candidates == result_2.total_candidates
         assert result_1.total_duplicates_auto == result_2.total_duplicates_auto
-        assert result_1.total_review_pairs == result_2.total_review_pairs
+        assert result_1.total_review_records == result_2.total_review_records
+        assert result_1.total_unique_records == result_2.total_unique_records
+        assert result_1.dedup_rate == result_2.dedup_rate
 
         # Verify canonical records are identical (content-wise)
         canonical_1 = Path(result_1.output_files["canonical_records"])

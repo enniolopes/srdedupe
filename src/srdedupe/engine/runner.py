@@ -16,7 +16,9 @@ but no automated review workflow is implemented.
 """
 
 import json
+import time
 import traceback
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -29,10 +31,11 @@ from srdedupe.clustering.models import ClusteringConfig
 from srdedupe.decision.models import ConfusionMatrix, NPCalibration, Thresholds
 from srdedupe.decision.policy import make_pair_decisions
 from srdedupe.engine.config import PipelineConfig, PipelineResult
+from srdedupe.merge.models import MergeSummary
 from srdedupe.merge.processor import process_canonical_merge
 from srdedupe.models import CanonicalRecord
 from srdedupe.normalize import normalize
-from srdedupe.parse.ingestion import ingest_folder
+from srdedupe.parse.ingestion import IngestionReport, ingest_file, ingest_folder
 from srdedupe.scoring.fs_model import FSModel
 from srdedupe.scoring.score_pairs import score_all_pairs
 
@@ -44,7 +47,7 @@ _FALLBACK_FSMODEL_PATH = Path(__file__).parent.parent.parent.parent / "models" /
 # Stage directory helpers
 # ---------------------------------------------------------------------------
 
-_STAGE_DIRS = ("stage1", "stage2", "stage3", "stage4", "stage5", "artifacts")
+_STAGE_DIRS = ("stage1", "stage2", "stage3", "stage4", "stage5", "artifacts", "reports")
 
 
 def _ensure_output_dirs(output_dir: Path) -> dict[str, Path]:
@@ -55,6 +58,31 @@ def _ensure_output_dirs(output_dir: Path) -> dict[str, Path]:
         d.mkdir(parents=True, exist_ok=True)
         dirs[name] = d
     return dirs
+
+
+def _write_ingestion_report(
+    report: IngestionReport | None,
+    output_dir: Path,
+) -> None:
+    """Persist ingestion report with per-file statistics.
+
+    Parameters
+    ----------
+    report : IngestionReport | None
+        Ingestion report from folder parsing (None for single-file).
+    output_dir : Path
+        Base pipeline output directory.
+    """
+    if report is None:
+        return
+
+    reports_dir = output_dir / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    report_path = reports_dir / "ingestion_report.json"
+
+    report_dict = asdict(report)
+    with report_path.open("w", encoding="utf-8") as f:
+        json.dump(report_dict, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 
 # ---------------------------------------------------------------------------
@@ -129,18 +157,24 @@ def _stage1_parse_and_normalize(
     input_path: Path,
     output_dir: Path,
     logger: AuditLogger | None,
-) -> list[CanonicalRecord]:
-    """Stage 1: Parse input files and normalize fields."""
+) -> tuple[list[CanonicalRecord], IngestionReport | None]:
+    """Stage 1: Parse input files and normalize fields.
+
+    Returns
+    -------
+    tuple[list[CanonicalRecord], IngestionReport | None]
+        Normalized records and the ingestion report (None for single-file).
+    """
     if logger:
         logger.event("stage1_parse_started", stage="stage1_parse")
 
-    if input_path.is_file():
-        from srdedupe.parse.ingestion import ingest_file
+    report: IngestionReport | None = None
 
+    if input_path.is_file():
         records_iter, _ = ingest_file(input_path)
         records = list(records_iter)
     else:
-        records_iter, _ = ingest_folder(input_path, recursive=True)
+        records_iter, report = ingest_folder(input_path, recursive=True)
         records = list(records_iter)
 
     normalized_records = [normalize(rec) for rec in records]
@@ -158,7 +192,7 @@ def _stage1_parse_and_normalize(
             data={"records_count": len(normalized_records)},
         )
 
-    return normalized_records
+    return normalized_records, report
 
 
 def _stage2_generate_candidates(
@@ -307,7 +341,7 @@ def _stage6_canonical_merge(
     artifacts_dir: Path,
     records: list[CanonicalRecord],
     logger: AuditLogger | None,
-) -> dict[str, int]:
+) -> MergeSummary:
     """Stage 6: Merge clusters and generate deduplicated outputs."""
     if logger:
         logger.event("stage6_merge_started", stage="stage6_merge")
@@ -315,26 +349,27 @@ def _stage6_canonical_merge(
     clusters_path = clusters_dir / "clusters.jsonl"
     records_map = {r.rid: r for r in records}
 
-    result = process_canonical_merge(
+    summary = process_canonical_merge(
         clusters_path=clusters_path,
         records_dir=records_dir,
         output_dir=artifacts_dir,
         records_map=records_map,
     )
 
-    stats = {
-        "merged_clusters": result.auto_clusters_merged,
-        "total_records_output": result.records_out_deduped_auto + result.records_out_review_pending,
-    }
-
     if logger:
         logger.event(
             "stage6_merge_complete",
             stage="stage6_merge",
-            data=stats,
+            data={
+                "merged_clusters": summary.auto_clusters_merged,
+                "singletons_count": summary.singletons_count,
+                "records_out_review_pending": summary.records_out_review_pending,
+                "records_out_unique_total": summary.records_out_unique_total,
+                "dedup_rate": summary.dedup_rate,
+            },
         )
 
-    return stats
+    return summary
 
 
 # ---------------------------------------------------------------------------
@@ -352,13 +387,17 @@ def _run_stages(
     Accumulates partial results so that diagnostic information
     is preserved even when a late stage fails.
     """
+    start_time = time.perf_counter() if config.track_execution_time else None
+
     if not input_path.exists():
         return PipelineResult(
             success=False,
             total_records=0,
             total_candidates=0,
             total_duplicates_auto=0,
-            total_review_pairs=0,
+            total_review_records=0,
+            total_unique_records=0,
+            dedup_rate=0.0,
             output_files={},
             error_message=f"Input path does not exist: {input_path}",
         )
@@ -368,12 +407,17 @@ def _run_stages(
     total_records = 0
     total_candidates = 0
     total_duplicates_auto = 0
-    total_review_pairs = 0
+    total_review_records = 0
+    total_unique_records = 0
+    dedup_rate = 0.0
     output_files: dict[str, str] = {}
 
     try:
-        records = _stage1_parse_and_normalize(input_path, dirs["stage1"], logger)
+        records, ingestion_report = _stage1_parse_and_normalize(input_path, dirs["stage1"], logger)
         total_records = len(records)
+
+        # Persist ingestion report with per-file statistics
+        _write_ingestion_report(ingestion_report, config.output_dir)
 
         if total_records == 0:
             return PipelineResult(
@@ -381,7 +425,9 @@ def _run_stages(
                 total_records=0,
                 total_candidates=0,
                 total_duplicates_auto=0,
-                total_review_pairs=0,
+                total_review_records=0,
+                total_unique_records=0,
+                dedup_rate=0.0,
                 output_files={},
                 error_message="No records found in input",
             )
@@ -391,15 +437,26 @@ def _run_stages(
 
         _stage3_score_pairs(records, dirs["stage2"], dirs["stage3"], logger, config.fs_model_path)
 
-        decision_stats = _stage4_make_decisions(
-            records, config, dirs["stage3"], dirs["stage4"], logger
-        )
-        total_duplicates_auto = decision_stats.get("auto_dup", 0)
-        total_review_pairs = decision_stats.get("review", 0)
+        _stage4_make_decisions(records, config, dirs["stage3"], dirs["stage4"], logger)
 
         _stage5_build_clusters(records, dirs["stage4"], dirs["stage5"], logger)
 
-        _stage6_canonical_merge(dirs["stage5"], dirs["stage1"], dirs["artifacts"], records, logger)
+        merge_summary = _stage6_canonical_merge(
+            dirs["stage5"], dirs["stage1"], dirs["artifacts"], records, logger
+        )
+
+        # Capture total pipeline execution time
+        if start_time is not None:
+            merge_summary.execution_time_seconds = time.perf_counter() - start_time
+            summary_path = dirs["reports"] / "merge_summary.json"
+            with summary_path.open("w") as f:
+                json.dump(merge_summary.to_dict(), f, indent=2, sort_keys=True)
+
+        # Record/cluster-level metrics from the final merge stage
+        total_duplicates_auto = merge_summary.auto_clusters_merged
+        total_review_records = merge_summary.records_out_review_pending
+        total_unique_records = merge_summary.records_out_unique_total
+        dedup_rate = merge_summary.dedup_rate
 
         output_files = {
             "canonical_records": str(dirs["stage1"] / "canonical_records.jsonl"),
@@ -412,12 +469,26 @@ def _run_stages(
             "clusters_enriched": str(dirs["artifacts"] / "clusters_enriched.jsonl"),
         }
 
+        ingestion_report_path = dirs["reports"] / "ingestion_report.json"
+        if ingestion_report_path.exists():
+            output_files["ingestion_report"] = str(ingestion_report_path)
+
+        singletons_ris = dirs["artifacts"] / "singletons.ris"
+        if singletons_ris.exists():
+            output_files["singletons_ris"] = str(singletons_ris)
+
+        review_ris = dirs["artifacts"] / "review_pending.ris"
+        if review_ris.exists():
+            output_files["review_pending_ris"] = str(review_ris)
+
         return PipelineResult(
             success=True,
             total_records=total_records,
             total_candidates=total_candidates,
             total_duplicates_auto=total_duplicates_auto,
-            total_review_pairs=total_review_pairs,
+            total_review_records=total_review_records,
+            total_unique_records=total_unique_records,
+            dedup_rate=dedup_rate,
             output_files=output_files,
         )
 
@@ -435,7 +506,9 @@ def _run_stages(
             total_records=total_records,
             total_candidates=total_candidates,
             total_duplicates_auto=total_duplicates_auto,
-            total_review_pairs=total_review_pairs,
+            total_review_records=total_review_records,
+            total_unique_records=total_unique_records,
+            dedup_rate=dedup_rate,
             output_files=output_files,
             error_message=error_msg,
         )

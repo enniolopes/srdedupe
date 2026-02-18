@@ -40,8 +40,10 @@ from srdedupe import dedupe
 result = dedupe("references.ris", output_dir="out", fpr_alpha=0.01)
 
 print(f"Records: {result.total_records}")
-print(f"Auto-merged: {result.total_duplicates_auto}")
-print(f"Review required: {result.total_review_pairs}")
+print(f"Auto-merged clusters: {result.total_duplicates_auto}")
+print(f"Review records: {result.total_review_records}")
+print(f"Unique records: {result.total_unique_records}")
+print(f"Dedup rate: {result.dedup_rate:.1%}")
 print(f"Output: {result.output_files['deduplicated_ris']}")
 ```
 
@@ -87,7 +89,7 @@ Pairs classified as REVIEW are preserved in output artifacts for manual inspecti
 `dedupe(input_path, *, output_dir="out", fpr_alpha=0.01, t_low=0.3, t_high=None) -> PipelineResult`
 
 Run the full deduplication pipeline. Returns a `PipelineResult` with:
-- `success`, `total_records`, `total_candidates`, `total_duplicates_auto`, `total_review_pairs`
+- `success`, `total_records`, `total_candidates`, `total_duplicates_auto`, `total_review_records`, `total_unique_records`, `dedup_rate`
 - `output_files` — dict mapping artifact names to file paths
 - `error_message` — error details if `success` is False
 
@@ -129,10 +131,15 @@ out/
 ├── stage3/scored_pairs.jsonl
 ├── stage4/pair_decisions.jsonl
 ├── stage5/clusters.jsonl
-└── artifacts/
-    ├── deduped_auto.ris
-    ├── merged_records.jsonl
-    └── clusters_enriched.jsonl
+├── artifacts/
+│   ├── deduped_auto.ris
+│   ├── merged_records.jsonl
+│   ├── clusters_enriched.jsonl
+│   ├── review_pending.ris  (if review pairs exist)
+│   └── singletons.ris      (if singletons exist)
+└── reports/
+    ├── ingestion_report.json  (folder input only)
+    └── merge_summary.json
 ```
 
 ## Development

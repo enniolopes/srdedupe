@@ -105,3 +105,44 @@ def test_ingest_file_nonexistent() -> None:
     assert len(result.errors) == 1
     assert "Failed to read file" in result.errors[0]
     assert result.records_parsed == 0
+
+
+@pytest.mark.unit
+def test_ingest_file_extension_fallback(tmp_path: Path) -> None:
+    """Test extension-based fallback when content sniffing fails.
+
+    When the first record is large and ``sniff_format`` cannot detect
+    the format from the initial sample, the ingestion layer must fall
+    back to the file extension.
+    """
+    # Build a valid RIS file whose first record exceeds 100 lines
+    lines = ["TY  - JOUR", "AU  - Smith, J", "TI  - Big First Record"]
+    lines.extend([f"AD  - Institution {i}" for i in range(120)])
+    lines.append("ER  - ")
+    lines.append("")
+
+    ris_file = tmp_path / "large_first_record.ris"
+    ris_file.write_text("\n".join(lines), encoding="utf-8")
+
+    records, result = ingest_file(ris_file)
+
+    assert result.format_detected == "ris"
+    assert result.records_parsed == 1
+    assert len(result.errors) == 0
+
+
+@pytest.mark.unit
+def test_ingest_file_utf8_bom(tmp_path: Path) -> None:
+    """Test ingestion handles UTF-8 BOM correctly."""
+    content = "TY  - JOUR\nAU  - Müller, H\nTI  - Test\nER  - \n"
+    bom_content = b"\xef\xbb\xbf" + content.encode("utf-8")
+
+    ris_file = tmp_path / "bom_file.ris"
+    ris_file.write_bytes(bom_content)
+
+    records, result = ingest_file(ris_file)
+
+    assert result.encoding_used == "utf-8-sig"
+    assert result.format_detected == "ris"
+    assert result.records_parsed == 1
+    assert len(result.errors) == 0

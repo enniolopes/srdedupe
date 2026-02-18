@@ -132,35 +132,48 @@ class MergeSummary:
 
     Attributes
     ----------
+    records_in_total : int
+        Total records available at merge input.
     clusters_auto_in : int
         Number of AUTO clusters input.
     clusters_review_in : int
         Number of REVIEW clusters input.
     auto_clusters_merged : int
-        Number of AUTO clusters merged.
-    records_in_total : int
-        Total records input.
-    records_out_deduped_auto : int
-        Records in deduped_auto.ris.
-    records_out_review_pending : int
-        Records in review_pending.ris.
+        Number of AUTO clusters successfully merged.
     max_cluster_size_merged : int
-        Maximum cluster size merged.
-    merge_warnings_total : int
-        Total merge warnings.
-    fail_fast_conflict_count : int
-        Fail-fast conflicts (should be 0).
+        Largest cluster size merged.
+    records_not_found : int
+        Cluster member RIDs not found in the records map.
+    singletons_count : int
+        Records not present in any cluster (unique).
+    records_out_deduped_auto : int
+        Merged records written to deduped_auto.ris.
+    records_out_review_pending : int
+        Records written to review_pending.ris.
+    records_out_unique_total : int
+        Total unique records after automated dedup
+        (singletons + auto_clusters_merged).
+    dedup_rate : float
+        Proportion of input records removed by dedup (0.0–1.0).
+    timestamp : str
+        ISO-8601 timestamp of merge execution.
+    execution_time_seconds : float
+        Total pipeline execution time in seconds.
     """
 
+    records_in_total: int = 0
     clusters_auto_in: int = 0
     clusters_review_in: int = 0
     auto_clusters_merged: int = 0
-    records_in_total: int = 0
+    max_cluster_size_merged: int = 0
+    records_not_found: int = 0
+    singletons_count: int = 0
     records_out_deduped_auto: int = 0
     records_out_review_pending: int = 0
-    max_cluster_size_merged: int = 0
-    merge_warnings_total: int = 0
-    fail_fast_conflict_count: int = 0
+    records_out_unique_total: int = 0
+    dedup_rate: float = 0.0
+    timestamp: str = ""
+    execution_time_seconds: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization.
