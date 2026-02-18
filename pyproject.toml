@@ -2,7 +2,7 @@
 
 [project]
 name = "srdedupe"
-version = "0.1.0"
+version = "0.1.1"
 description = "Safe, FPR-controlled, reproducible deduplication pipeline for bibliographic reference files, designed for systematic review workflows."
 readme = "README.md"
 requires-python = ">=3.11"
