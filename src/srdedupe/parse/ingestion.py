@@ -182,7 +182,12 @@ def ingest_file(file_path: Path) -> tuple[list[CanonicalRecord], FileIngestionRe
     content = normalize_line_endings(content)
     lines = content.split("\n")
 
-    format_detected = sniff_format(lines[:50])
+    format_detected = sniff_format(lines)
+
+    # Fall back to extension-based detection when content sniffing fails
+    if format_detected == "unknown":
+        format_detected = SUPPORTED_EXTENSIONS.get(extension, "unknown")
+
     parser = get_parser_for_format(format_detected)
 
     if parser is None:

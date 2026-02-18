@@ -19,7 +19,7 @@ from srdedupe.parse.base import (
 PARSER_NAME = "ris_parser"
 PARSER_VERSION = "1.0.0"
 
-TAG_PATTERN = re.compile(r"^([A-Z0-9]{2})  - (.*)$")
+TAG_PATTERN = re.compile(r"^([A-Z0-9]{2})  - ?(.*)$")
 
 
 def parse_ris(

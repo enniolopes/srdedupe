@@ -213,16 +213,19 @@ def deduplicate(
             click.echo("\nResults:", err=True)
             click.echo(f"  Total records: {result.total_records}", err=True)
             click.echo(f"  Candidate pairs: {result.total_candidates}", err=True)
-            click.echo(f"  Auto-merged duplicates: {result.total_duplicates_auto}", err=True)
-            click.echo(f"  Review required: {result.total_review_pairs}", err=True)
+            click.echo(f"  Auto-merged clusters: {result.total_duplicates_auto}", err=True)
+            click.echo(f"  Records for review: {result.total_review_records}", err=True)
+            click.echo(f"  Unique records: {result.total_unique_records}", err=True)
+            click.echo(f"  Dedup rate: {result.dedup_rate:.1%}", err=True)
             click.echo("\nOutputs:", err=True)
             for name, path in result.output_files.items():
                 click.echo(f"  {name}: {path}", err=True)
         else:
             click.secho(
                 f"✓ Deduplicated {result.total_records} records "
+                f"→ {result.total_unique_records} unique "
                 f"({result.total_duplicates_auto} auto-merged, "
-                f"{result.total_review_pairs} for review)",
+                f"{result.total_review_records} for review)",
                 fg="green",
             )
 

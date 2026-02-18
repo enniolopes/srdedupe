@@ -23,6 +23,8 @@ class PipelineConfig:
         Path to Fellegi-Sunter model JSON. If None, uses bundled default.
     output_dir : Path
         Base directory for all outputs.
+    track_execution_time : bool
+        Record total pipeline wall-clock time in merge_summary.json.
     """
 
     fpr_alpha: float = 0.01
@@ -31,6 +33,7 @@ class PipelineConfig:
     candidate_blockers: list[str] | None = None
     fs_model_path: Path | None = None
     output_dir: Path = Path("out")
+    track_execution_time: bool = False
 
     def __post_init__(self) -> None:
         """Set defaults and validate."""
@@ -64,6 +67,10 @@ class PipelineConfig:
 class PipelineResult:
     """Results from pipeline execution.
 
+    All metrics are **record/cluster-level**, derived from the final
+    merge stage (stage 6).  Pair-level counts from the decision stage
+    are internal and not exposed here.
+
     Attributes
     ----------
     success : bool
@@ -73,9 +80,15 @@ class PipelineResult:
     total_candidates : int
         Candidate pairs generated.
     total_duplicates_auto : int
-        Auto-merged duplicates.
-    total_review_pairs : int
-        Pairs requiring human review.
+        Duplicate clusters auto-merged (each cluster had 2+ records
+        that were collapsed into one representative record).
+    total_review_records : int
+        Individual records in clusters flagged for human review.
+    total_unique_records : int
+        Unique records after automated deduplication
+        (singletons + auto-merged clusters, excludes review records).
+    dedup_rate : float
+        Fraction of input records removed by deduplication (0.0–1.0).
     output_files : dict[str, str]
         Map of artifact type to file path.
     error_message : str | None
@@ -86,7 +99,9 @@ class PipelineResult:
     total_records: int
     total_candidates: int
     total_duplicates_auto: int
-    total_review_pairs: int
+    total_review_records: int
+    total_unique_records: int
+    dedup_rate: float
     output_files: dict[str, str]
     error_message: str | None = None
 

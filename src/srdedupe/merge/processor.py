@@ -2,6 +2,7 @@
 
 import json
 from collections.abc import Sequence
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -109,6 +110,15 @@ def process_canonical_merge(
         clusters_review_in=len(review_clusters),
     )
 
+    # Populate records_in_total from records_map when available
+    if records_map is not None:
+        summary.records_in_total = len(records_map)
+
+    # Collect all RIDs across clusters for singleton detection
+    all_clustered_rids: set[str] = set()
+    for cluster in clusters:
+        all_clustered_rids.update(cluster.rids)
+
     merge_policy = MergePolicy(name="merge_v1", version="1.0.0")
 
     merged_records: list[MergedRecord] = []
@@ -121,7 +131,11 @@ def process_canonical_merge(
             }
         else:
             cluster_records_dict = load_records_batch(cluster.rids, records_dir)
-        cluster_records = [cluster_records_dict[rid] for rid in sorted(cluster.rids)]
+
+        summary.records_not_found += len(cluster.rids) - len(cluster_records_dict)
+        cluster_records = [
+            cluster_records_dict[rid] for rid in sorted(cluster.rids) if rid in cluster_records_dict
+        ]
 
         if not cluster_records:
             continue
@@ -180,6 +194,8 @@ def process_canonical_merge(
             }
         else:
             cluster_records_dict = load_records_batch(rev_cluster.rids, records_dir)
+
+        summary.records_not_found += len(rev_cluster.rids) - len(cluster_records_dict)
         for rid in sorted(rev_cluster.rids):
             if rid in cluster_records_dict:
                 review_records.append(cluster_records_dict[rid])
@@ -189,6 +205,26 @@ def process_canonical_merge(
     if review_records:
         review_ris_path = output_dir / "review_pending.ris"
         write_ris_from_records(review_records, review_ris_path)
+
+    # Compute singletons (records not in any cluster)
+    singleton_records: list[CanonicalRecord] = []
+    if records_map is not None:
+        singleton_rids = set(records_map.keys()) - all_clustered_rids
+        summary.singletons_count = len(singleton_rids)
+        singleton_records = [records_map[rid] for rid in sorted(singleton_rids)]
+
+    if singleton_records:
+        singletons_ris_path = output_dir / "singletons.ris"
+        write_ris_from_records(singleton_records, singletons_ris_path)
+
+    # Compute derived metrics
+    summary.records_out_unique_total = summary.singletons_count + summary.auto_clusters_merged
+    if summary.records_in_total > 0:
+        summary.dedup_rate = round(
+            1.0 - summary.records_out_unique_total / summary.records_in_total, 4
+        )
+
+    summary.timestamp = datetime.now(UTC).isoformat()
 
     clusters_enriched_path = output_dir / "clusters_enriched.jsonl"
     with clusters_enriched_path.open("w") as f:

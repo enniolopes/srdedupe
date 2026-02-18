@@ -126,7 +126,9 @@ def test_pipeline_result_to_dict() -> None:
         total_records=100,
         total_candidates=50,
         total_duplicates_auto=10,
-        total_review_pairs=5,
+        total_review_records=5,
+        total_unique_records=85,
+        dedup_rate=0.15,
         output_files={"canonical_records": "out/stage1/canonical_records.jsonl"},
         error_message=None,
     )
@@ -137,7 +139,9 @@ def test_pipeline_result_to_dict() -> None:
     assert d["total_records"] == 100
     assert d["total_candidates"] == 50
     assert d["total_duplicates_auto"] == 10
-    assert d["total_review_pairs"] == 5
+    assert d["total_review_records"] == 5
+    assert d["total_unique_records"] == 85
+    assert d["dedup_rate"] == 0.15
     assert "canonical_records" in d["output_files"]
     assert d["error_message"] is None
 
@@ -152,7 +156,7 @@ def test_ensure_output_dirs(tmp_path: Path) -> None:
     """Test all stage directories are created with correct keys."""
     dirs = _ensure_output_dirs(tmp_path / "out")
 
-    expected = {"stage1", "stage2", "stage3", "stage4", "stage5", "artifacts"}
+    expected = {"stage1", "stage2", "stage3", "stage4", "stage5", "artifacts", "reports"}
     assert set(dirs.keys()) == expected
 
     for name in expected:
@@ -238,10 +242,12 @@ def test_stage1_parse_and_normalize(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    records = _stage1_parse_and_normalize(input_file, output_dir, logger=None)
+    records, report = _stage1_parse_and_normalize(input_file, output_dir, logger=None)
 
     assert len(records) > 0
     assert isinstance(records[0], CanonicalRecord)
+    # report is None for single-file input (only populated for folder ingestion)
+    assert report is None
     assert (output_dir / "canonical_records.jsonl").exists()
 
 
@@ -353,9 +359,12 @@ def test_stage6_canonical_merge(mock_merge: Mock, tmp_path: Path) -> None:
     mock_summary.auto_clusters_merged = 10
     mock_summary.records_out_deduped_auto = 90
     mock_summary.records_out_review_pending = 10
+    mock_summary.singletons_count = 50
+    mock_summary.records_out_unique_total = 60
+    mock_summary.dedup_rate = 0.4
     mock_merge.return_value = mock_summary
 
-    stats = _stage6_canonical_merge(
+    result = _stage6_canonical_merge(
         clusters_dir=clusters_dir,
         records_dir=records_dir,
         artifacts_dir=artifacts_dir,
@@ -363,7 +372,11 @@ def test_stage6_canonical_merge(mock_merge: Mock, tmp_path: Path) -> None:
         logger=None,
     )
 
-    assert stats == {"merged_clusters": 10, "total_records_output": 100}
+    assert result.auto_clusters_merged == 10
+    assert result.singletons_count == 50
+    assert result.records_out_review_pending == 10
+    assert result.records_out_unique_total == 60
+    assert result.dedup_rate == 0.4
 
 
 # ---------------------------------------------------------------------------
@@ -461,7 +474,9 @@ def test_run_pipeline_passes_logger(mock_run: Mock, tmp_path: Path) -> None:
         total_records=1,
         total_candidates=0,
         total_duplicates_auto=0,
-        total_review_pairs=0,
+        total_review_records=0,
+        total_unique_records=1,
+        dedup_rate=0.0,
         output_files={},
     )
 

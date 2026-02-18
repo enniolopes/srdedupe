@@ -247,17 +247,22 @@ def normalize_line_endings(content: str) -> str:
 def sniff_format(lines: list[str]) -> str:
     """Sniff format by inspecting file content.
 
+    Uses a 100-line sample window to accommodate records with many
+    author/affiliation fields.  RIS detection requires only the ``TY``
+    tag because the mandatory ``ER`` closer may fall beyond the sample
+    when the first record is large.
+
     Parameters
     ----------
     lines : list[str]
-        First ~50 lines of the file.
+        Lines of the file (at least 100 recommended).
 
     Returns
     -------
     str
         Format identifier (ris|pubmed|bibtex|wos|endnote_tagged|unknown).
     """
-    sample_text = "\n".join(lines[:50])
+    sample_text = "\n".join(lines[:100])
 
     if re.search(r"^@\w+\s*\{", sample_text, re.MULTILINE):
         return "bibtex"
@@ -265,9 +270,7 @@ def sniff_format(lines: list[str]) -> str:
     if re.search(r"^PT [JS]\b", sample_text, re.MULTILINE):
         return "wos"
 
-    if re.search(r"^TY  - ", sample_text, re.MULTILINE) and re.search(
-        r"^ER  -\s*$", sample_text, re.MULTILINE
-    ):
+    if re.search(r"^TY  - ", sample_text, re.MULTILINE):
         return "ris"
 
     if re.search(r"^PMID-? ", sample_text, re.MULTILINE):
