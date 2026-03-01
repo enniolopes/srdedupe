@@ -61,7 +61,7 @@ jobs:
           ls -1 dist/
 
       - name: Upload distribution packages
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: python-package-distributions
           path: dist/
