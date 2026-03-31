@@ -8,7 +8,11 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "Ennio Politi Lopes", email = "enniolopes@gmail.com"}
+    {name = "Ennio Politi Lopes", email = "enniolopes@gmail.com"},
+    {name = "Roberto Douglas Guimarães de Aquino", email = "aquinordga@gmail.com"},
+    {name = "Eric Keiji Tokuda", email = "tokudaek@gmail.com"},
+    {name = "Mellina Yamamura", email = "mellina@ufscar.br"},
+    {name = "Alexandre Cláudio Botazzo Delbem", email = "acbd@icmc.usp.br"},
 ]
 maintainers = [
     {name = "Ennio Politi Lopes", email = "enniolopes@gmail.com"}
