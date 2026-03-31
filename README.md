@@ -163,7 +163,7 @@ MIT — see [LICENSE](LICENSE).
 
 ```bibtex
 @software{srdedupe2026,
-  author = {Lopes, Ennio Politi},
+  author = {Lopes, Ennio Politi and Aquino, Roberto Douglas Guimarães de and Tokuda, Eric Keiji and Yamamura, Mellina and Delbem, Alexandre Cláudio Botazzo},
   title = {srdedupe: Safe Bibliographic Deduplication},
   year = {2026},
   url = {https://github.com/enniolopes/srdedupe}
