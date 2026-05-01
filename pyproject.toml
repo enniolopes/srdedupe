@@ -49,7 +49,7 @@ dev = [
     "mypy>=1.8",
     "ruff>=0.2",
     "pre-commit>=3.0",
-    "build>=1.0",
+    "build>=1.5.0",
     "twine>=4.0",
     "jsonschema>=4.26",
 ]
@@ -113,7 +113,7 @@ pytest-cov = "^7.0"
 mypy = "^1.8"
 ruff = "^0.15"
 pre-commit = "^3.0"
-build = "^1.0"
+build = "^1.5"
 twine = "^6.2.0"
 jsonschema = "^4.26.0"
 
