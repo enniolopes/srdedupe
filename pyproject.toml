@@ -39,7 +39,7 @@ classifiers = [
 ]
 dependencies = [
     "click>=8.1",
-    "datasketch>=1.6.0",
+    "datasketch>=1.10.0",
 ]
 
 [project.optional-dependencies]
